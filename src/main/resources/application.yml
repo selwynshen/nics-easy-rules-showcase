@@ -1,0 +1,12 @@
+spring:
+  profiles: local
+
+logging:
+  config: classpath:logback-spring.xml
+  path: /logs/nics-easy-rules-showcase
+  log:
+    level: INFO
+
+
+
+

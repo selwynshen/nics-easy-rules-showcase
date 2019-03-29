@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true">
+    <springProperty scope="context" name="logLevel" source="logging.log.level" defaultValue="INFO"/>
+    <springProperty scope="context" name="logPath" source="logging.path" defaultValue="logs"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder charset="UTF-8">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread][%X{traceId}] %-5level %logger - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread][%X{traceId}] %-5level %logger - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${logPath}/error.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${logPath}/error.%d{yyyy-MM-dd}.%i.log.zip</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <TimeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <MaxFileSize>1000MB</MaxFileSize>
+            </TimeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread][%X{traceId}] %-5level %logger - %msg%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <appender name="APPLICATION" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${logPath}/application.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${logPath}/application.%d{yyyy-MM-dd}.%i.log.zip</FileNamePattern>
+            <MaxHistory>30</MaxHistory>
+            <TimeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <MaxFileSize>50MB</MaxFileSize>
+            </TimeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread][%X{traceId}] %-5level %logger{50} - %msg%n</pattern>
+        </encoder>
+
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>DENY</onMatch>
+            <onMismatch>ACCEPT</onMismatch>
+        </filter>
+    </appender>
+
+    <logger name="org.springframework" level="ERROR" additivity="false">
+        <appender-ref ref="APPLICATION"></appender-ref>
+        <appender-ref ref="ERROR"/>
+    </logger>
+
+    <logger name="com.github.selwynshen.nics.rules.core" level="INFO" additivity="false">
+        <appender-ref ref="APPLICATION"/>
+        <appender-ref ref="ERROR"/>
+    </logger>
+
+    <logger name="nics.easy.rules.showcase.rules" level="INFO" additivity="false">
+        <appender-ref ref="APPLICATION"/>
+        <appender-ref ref="ERROR"/>
+    </logger>
+
+    <root level="${logLevel}">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>

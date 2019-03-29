@@ -1,0 +1,7 @@
+group:
+  name: entryInvoiceGroupRules
+  rules:
+    - name: invInfoIncompleteRule
+      priority: 1
+    - name: invDateIncorrectRule
+      priority: 2
